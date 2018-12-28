@@ -5,7 +5,7 @@ ENV TERM=xterm-256color
 ENV LANGUAGE=en_US.UTF-8
 
 # Preparation
-RUN apt update && apt install -y vim procps
+RUN apt update && apt install -y vim procps gnupg gnupg2 gnupg1
 
 # Install Hashicorp required packages
 RUN apt install -y wget unzip
@@ -64,7 +64,9 @@ RUN ln -s ~/dotfiles/.tmux.conf ~/.tmux.conf && \
     ln -s ~/dotfiles/.shell_prompt.sh ~/.shell_prompt.sh
 
 # Install ansible
-RUN apt install -y ansible
+RUN echo "deb http://ppa.launchpad.net/ansible/ansible/ubuntu trusty main" >> /etc/apt/sources.list
+RUN apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 93C4A3FD7BB9C367 && \
+    apt-get update && apt-get -y install ansible && ansible --version
 
 # Entrypoint
 COPY entrypoint.zsh /entrypoint.zsh
