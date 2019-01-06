@@ -1,17 +1,9 @@
-FROM debian:9.6
+FROM debian:9.6 as hashicorp
 
 ENV ARCH=amd64
-ENV TERM=xterm-256color
-ENV LANGUAGE=en_US.UTF-8
-
-# Create tmux user
-RUN useradd tmux -s /bin/zsh -b /home -m
-
-# Preparation
-RUN apt update && apt install -y vim procps gnupg gnupg2 gnupg1 curl zsh git
 
 # Install Hashicorp required packages
-RUN apt install -y wget unzip
+RUN apt update && apt install -y wget unzip
 
 # Hashicorp tools
 ENV CONSUL_VERSION=1.4.0
@@ -50,6 +42,25 @@ RUN set -eux; \
     cd .. && \
     rm -rf terraform && \
     terraform version
+
+# ----------
+# MAIN STAGE
+# ----------
+FROM debian:9.6
+
+ENV TERM=xterm-256color
+ENV LANGUAGE=en_US.UTF-8
+
+# Fetch Hashicorp binairies from the previous build stage
+COPY --from=hashicorp /bin/terraform /bin/.
+COPY --from=hashicorp /bin/consul /bin/.
+COPY --from=hashicorp /bin/vault /bin/.
+
+# Create tmux user
+RUN useradd tmux -s /bin/zsh -b /home -m
+
+# Preparation
+RUN apt update && apt install -y vim procps gnupg gnupg2 gnupg1 curl zsh git wget unzip
 
 # Install and preconfigure tmux
 WORKDIR /data
