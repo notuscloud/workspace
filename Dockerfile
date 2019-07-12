@@ -6,9 +6,9 @@ ENV ARCH=amd64
 RUN apt update && apt install -y wget unzip
 
 # Hashicorp tools
-ENV CONSUL_VERSION=1.4.0
-ENV VAULT_VERSION=1.0.1
-ENV TERRAFORM_VERSION=0.11.11
+ENV CONSUL_VERSION=1.5.2
+ENV VAULT_VERSION=1.1.3
+ENV TERRAFORM_VERSION=0.12.4
 
 ENV HASHICORP_RELEASES=https://releases.hashicorp.com
 
