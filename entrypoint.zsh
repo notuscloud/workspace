@@ -2,11 +2,8 @@
 
 source ~/.zshrc
 
-# Start the tmux server with a default session
-tmux new-session -s default -n default -d
+# Start supervisor
+/usr/bin/supervisord -c /etc/supervisord.conf
 
-# Simple loop to keep the tmux server running
-while :; do
-  tmux list-windows
-  sleep 300
-done
+
+

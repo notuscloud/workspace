@@ -56,6 +56,13 @@ COPY --from=hashicorp /bin/terraform /bin/.
 COPY --from=hashicorp /bin/consul /bin/.
 COPY --from=hashicorp /bin/vault /bin/.
 
+# Install and configure supervisor
+RUN apt-get update && apt-get install -y supervisor
+COPY config/supervisord.conf /etc/supervisord.conf
+# Install wrappers
+COPY wrappers /opt/wrappers
+RUN chmod -Rv 755 /opt/wrappers
+
 # Create tmux user
 RUN useradd tmux -s /bin/zsh -b /home -m
 

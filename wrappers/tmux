@@ -1,0 +1,13 @@
+#!/bin/zsh
+
+# This is a simple tmux wrapper
+# Will start a tmux session
+
+source ~/.zshrc
+tmux new-session -s default -n default -d
+
+# Simple loop to keep the tmux server running
+while :; do
+  tmux list-windows
+  sleep 300
+done
