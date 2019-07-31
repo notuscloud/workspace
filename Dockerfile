@@ -67,33 +67,34 @@ RUN chmod -Rv 755 /opt/wrappers
 RUN useradd tmux -s /bin/zsh -b /home -m
 
 # Preparation
-RUN apt update && apt install -y vim procps gnupg gnupg2 gnupg1 curl zsh git wget unzip
+RUN apt update && apt install -y neovim procps gnupg gnupg2 gnupg1 curl zsh git wget unzip
 
 # Install and preconfigure tmux
 WORKDIR /data
 RUN apt install -y locales tmux
 RUN echo "en_US.UTF-8 UTF-8" > /etc/locale.gen
 RUN /usr/sbin/locale-gen
-COPY dotfiles dotfiles
-RUN ls -al /home/tmux && ln -s /data/dotfiles/.tmux.conf /home/tmux/.tmux.conf && \
-    ln -s /data/dotfiles/tmux_shell_prompt /home/tmux/tmux_shell_prompt && \
-    ln -s /data/dotfiles/.shell_prompt.sh /home/tmux/.shell_prompt.sh
 
 # Install ansible
 RUN echo "deb http://ppa.launchpad.net/ansible/ansible/ubuntu trusty main" >> /etc/apt/sources.list
 RUN apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 93C4A3FD7BB9C367 && \
     apt-get update && apt-get -y install ansible && ansible --version
 
-# Entrypoint
+# Entrypoint scripts
 COPY entrypoint.zsh /entrypoint.zsh
 RUN chmod 755 /entrypoint.zsh
 
 WORKDIR /home/tmux
 USER tmux
+
 # Install OhMyZsh
 RUN wget https://github.com/robbyrussell/oh-my-zsh/raw/master/tools/install.sh -O - | zsh || true
-RUN rm -f /home/tmux/.zshrc && ln -s /data/dotfiles/.zshrc /home/tmux/.zshrc
 
+# Install workspace-dotfiles
+RUN git clone https://github.com/notuscloud/workspace-dotfiles.git dotfiles
+RUN cd dotfiles && bash -x install.sh
+
+# ENTRYPOINT & CMD
 ENTRYPOINT /entrypoint.zsh
 CMD /bin/zsh
 
