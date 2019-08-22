@@ -7,7 +7,7 @@ RUN apt update && apt install -y wget unzip
 
 # Hashicorp tools
 ENV CONSUL_VERSION=1.5.2
-ENV VAULT_VERSION=1.1.3
+ENV VAULT_VERSION=1.2.0
 ENV TERRAFORM_VERSION=0.12.4
 
 ENV HASHICORP_RELEASES=https://releases.hashicorp.com
@@ -87,11 +87,9 @@ RUN chmod 755 /entrypoint.zsh
 WORKDIR /home/tmux
 USER tmux
 
-# Install OhMyZsh
-RUN wget https://github.com/robbyrussell/oh-my-zsh/raw/master/tools/install.sh -O - | zsh || true
-
 # Install workspace-dotfiles
-RUN git clone https://github.com/notuscloud/workspace-dotfiles.git dotfiles
+# RUN git clone https://github.com/notuscloud/workspace-dotfiles.git dotfiles
+COPY dotfiles dotfiles
 RUN cd dotfiles && bash -x install.sh
 
 # ENTRYPOINT & CMD
